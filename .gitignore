@@ -1,2 +1,5 @@
 models
 data
+# Ignore Hugging Face cache
+.cache/huggingface/datasets/
+
