@@ -69,18 +69,10 @@ def preprocess_audio_data_to_tensor(data_dir='data/audio'):
                 # Add the actor directory as a label
                 labeling_info = np.array([int(temp[-1]) for temp in wav_file[:-4].split('-')])
                 labels.append(labeling_info)
-                
+                 
     # Convert the list of features to a tensor
     features_tensor = torch.tensor(all_features, dtype=torch.float32)
     labels_tensor = torch.tensor(labels, dtype=torch.float32)
     
     return features_tensor, labels_tensor
 
-# Example usage
-data_dir = '../../data/audio/cnn_training_data'  # Path to the root audio folder
-features_tensor, labels_tensor = preprocess_audio_data_to_tensor(data_dir)
-print("Extracted tensor shape:", features_tensor.shape)  # Expected shape: [number of recordings, 180]
-
-# If you want to save the tensor for later usage
-torch.save(features_tensor, '../../data/audio/audio_features_tensor.pt')
-torch.save(labels_tensor, '../../data/audio/audio_labels_tensor.pt')
