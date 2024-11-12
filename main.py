@@ -14,7 +14,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
 # Two modality
-wav2vec_model = Wav2VecWrapper(pretrained_model_name="facebook/wav2vec2-base").to(device)
+wav2vec_model = Wav2VecWrapper(pretrained_model_name="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition").to(device)
 finbert_model = FinBERTWrapper(pretrained_model_name="yiyanghkust/finbert-tone").to(device)
 
 # Cross-Attention Fusion: TODO
