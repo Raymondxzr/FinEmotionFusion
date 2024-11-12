@@ -39,7 +39,7 @@ def extract_audio_features(file_path, sr=22050):
     return np.array(feature_vector)
 
 
-def preprocess_audio_data_to_tensor(data_dir='data/audio'):
+def preprocess_audio_data_to_tensor(data_dir='data/audio', label=True):
     """
     Processes all .wav files in the specified directory, extracting features from each file 
     and combining them into a single tensor dataset.
@@ -66,9 +66,9 @@ def preprocess_audio_data_to_tensor(data_dir='data/audio'):
                 features = extract_audio_features(file_path)
                 all_features.append(np.array(features))
                 
-                # Add the actor directory as a label
-                labeling_info = np.array([int(temp[-1]) for temp in wav_file[:-4].split('-')])
-                labels.append(labeling_info)
+                if label:
+                    labeling_info = np.array([int(temp[-1]) for temp in wav_file[:-4].split('-')])
+                    labels.append(labeling_info)
                  
     # Convert the list of features to a tensor
     features_tensor = torch.tensor(all_features, dtype=torch.float32)

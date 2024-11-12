@@ -25,3 +25,4 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 librosa==0.10.0
 datasets==3.1.0
+matplotlib
