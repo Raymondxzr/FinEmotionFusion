@@ -49,15 +49,15 @@ def move_audio_files(src_dir, dest_dir, directories=None, audio_extensions=(".wa
             dest_file_path = os.path.join(dest_dir, audio_file)
 
             # If a file with the same name exists in the destination, add a suffix to avoid overwriting
-            if os.path.exists(dest_file_path):
-                base, ext = os.path.splitext(audio_file)
-                counter = 1
-                while os.path.exists(dest_file_path):
-                    dest_file_path = os.path.join(dest_dir, f"{base}_{counter}{ext}")
-                    counter += 1
+            # if os.path.exists(dest_file_path):
+            #     base, ext = os.path.splitext(audio_file)
+            #     counter = 1
+            #     while os.path.exists(dest_file_path):
+            #         dest_file_path = os.path.join(dest_dir, f"{base}_{counter}{ext}")
+            #         counter += 1
 
             # Move the audio file
-            shutil.move(src_file_path, dest_file_path)
+            shutil.copy(src_file_path, dest_file_path)
             print(f"Moved: {src_file_path} to {dest_file_path}")
 
     print(f"All audio files have been moved to {dest_dir} in the specified order.")
@@ -83,16 +83,14 @@ def create_audio_label_json(base_dir, labels_file_path, output_json_path, direct
     # Read the labels from the specified labels file
     with open(labels_file_path, "r") as file:
         labels = [line.strip() for line in file.readlines()]
-    print(labels)
-    print(len(labels))
+
     # Initialize an empty list to store the mapping of audio paths to labels
-    data = []
+    data = {}
     label_index = 0  # Index to keep track of which label to assign
 
     # Traverse each directory in the specified order
     for dir_name in directories:
         dir_path = os.path.join(base_dir, dir_name)
-        
         # List all audio files in the current directory (assuming .mp3 files)
         audio_files = [f for f in os.listdir(dir_path) if f.endswith(".mp3")]
         sorted_files_list = sorted(audio_files, key=custom_sort_key)
@@ -101,7 +99,8 @@ def create_audio_label_json(base_dir, labels_file_path, output_json_path, direct
         # Map each audio file to a label
         for audio_file in sorted_files_list:
             if label_index < len(labels):
-                data.append({"audio_file": audio_file, "label": labels[label_index]})
+                data[audio_file] = int(labels[label_index])
+                # data.append({"audio_file": audio_file, "label": labels[label_index]})
                 label_index += 1
             else:
                 print("Warning: More audio files than labels. Some audio files will not have labels.")
@@ -109,20 +108,17 @@ def create_audio_label_json(base_dir, labels_file_path, output_json_path, direct
 
     # Save the data as a JSON file
     with open(output_json_path, "w") as json_file:
-        json.dump(data, json_file, indent=4)
+        json.dump([data], json_file, indent=4)
 
     print(f"JSON file with audio-to-label mapping has been saved to {output_json_path}")
 
     
 
-# Usage example:
 base_dir = '../earnings_call'
-labels_file_path = '../earnings_call/predicted_labels.txt'
+labels_file_path = '../predicted_labels.txt'
 output_json_path = '../data/labels.json'
 create_audio_label_json(base_dir, labels_file_path, output_json_path)
 
-
-# Usage example:
 
 dest_dir = '../data/audio'
 directories = ["3m", "amazon", "twitter"]  # Specify the directory order

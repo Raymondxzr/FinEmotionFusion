@@ -7,9 +7,12 @@ from transformers import Wav2Vec2FeatureExtractor
 from tqdm import tqdm
 
 class AudioPreprocessor:
-    def __init__(self, audio_dir, target_sample_rate=16000, batch_size=4, feature_extractor="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"):
+    def __init__(self, audio_dir, labels_dict, target_sample_rate=16000, batch_size=4, feature_extractor="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"):
         self.audio_dir = audio_dir
-        self.audio_files = [os.path.join(audio_dir, f) for f in os.listdir(audio_dir) if f.endswith(('.wav', '.mp3'))]
+        self.labels_dict = labels_dict
+        self.audio_files = [os.path.join(audio_dir, f) for f in os.listdir(audio_dir) if f.endswith(('.wav', '.mp3'))][:8]
+        # self.audio_files = [os.path.join(audio_dir, f) for f in self.audio_files_names]
+
         self.target_sample_rate = target_sample_rate
         self.batch_size = batch_size
         self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(feature_extractor)
@@ -49,14 +52,29 @@ class AudioPreprocessor:
 
     def preprocess(self):
         """
-        Preprocess all audio files in batches.
+        Preprocess all audio files in batches, returning features and batched labels.
         """
         all_features = []
+        all_labels = []
         for i in tqdm(range(0, len(self.audio_files), self.batch_size), desc="Preprocessing batches"):
+            # Get the current batch of audio files
             batch_files = self.audio_files[i:i + self.batch_size]
             batch_features = self.preprocess_batch(batch_files)
-            all_features.append(batch_features)
-            print(f"batch_features's shape: {batch_features.shape}")
 
-        print(f"all_features's length: {len(all_features)}")
-        return all_features 
+            # Extract corresponding labels
+            batch_labels = self.get_labels(batch_files)
+
+            all_features.append(batch_features)
+            all_labels.append(batch_labels)
+
+            print(f"Batch features shape: {batch_features.shape}")
+            print(f"Batch labels shape: {batch_labels.shape}")
+        return all_features, all_labels
+
+    def get_labels(self, batch_files):
+        """
+        Retrieve labels for a batch of audio files, ensuring alignment.
+        """
+        batch_file_names = [os.path.basename(file_path) for file_path in batch_files]
+        labels = [self.labels_dict[file_name] for file_name in batch_file_names]
+        return torch.tensor(labels)  # Return as a batched tensor
