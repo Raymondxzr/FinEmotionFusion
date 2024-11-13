@@ -1,0 +1,7 @@
+2024-11-11 15:54:51.283 | INFO     | __main__:main:107 - Loading FinBERT tokenizer and model...
+2024-11-11 15:54:52.087 | INFO     | __main__:main:110 - FinBERT model and tokenizer loaded successfully.
+2024-11-11 15:54:52.088 | INFO     | __main__:load_transcriptions:28 - Loaded 4 transcriptions from data/transcript_test.json.
+2024-11-11 15:54:52.090 | INFO     | __main__:generate_embeddings:59 - Tokenized input sentences successfully.
+2024-11-11 15:54:53.072 | INFO     | __main__:generate_embeddings:74 - Generated embeddings for 4 transcriptions.
+2024-11-11 15:54:53.076 | INFO     | __main__:save_embeddings:89 - Saved embeddings to data/output_test.json.
+2024-11-11 15:54:53.076 | INFO     | __main__:main:121 - Process completed successfully.
