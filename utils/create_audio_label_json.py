@@ -1,3 +1,6 @@
+"""
+Script moving audio files, and creating JSON mappings of audio files to labels. 
+"""
 import os
 import json
 import shutil
@@ -124,4 +127,4 @@ create_audio_label_json(base_dir, labels_file_path, output_json_path)
 dest_dir = '../data/audio'
 directories = ["3m", "amazon", "twitter"]  # Specify the directory order
 
-# move_audio_files(base_dir, dest_dir, directories=directories)
+move_audio_files(base_dir, dest_dir, directories=directories)

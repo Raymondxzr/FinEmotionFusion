@@ -22,13 +22,18 @@ Ensure you have [Conda](https://docs.conda.io/projects/conda/en/latest/user-guid
   ```bash
   pip install -r requirements.txt
   ```
+4. Move earnings_call folder to the top-level and then create audio-label mapping:
+   ```bash
+  python utils/create_audio_label_json.py
+  ```
 
 ### Project Structure
   ```bash
 EmotiFusion/
 ├── data/
 │   ├── audio/               # Raw audio data
-│   ├── transcripts/         # Raw text data
+│   ├── transcripts.json         # Raw text data
+│   ├── labels.json
 ├── models/
 │   ├── finbert/             # Saved models
 ├── src/
@@ -36,19 +41,31 @@ EmotiFusion/
 │   │   ├── preprocess_audio.py   # Preprocesses raw audio data
 │   │   ├── audio_model.py        # Model for processing audio data
 │   │   └── ...
+│   ├── data_pipeline/
+│   │   ├── train_cnn.py          # Script for training CNN for data generation
 │   ├── text_pipeline/
 │   │   ├── preprocess_text.py    # Preprocesses raw text data
 │   │   ├── text_model.py         # Model for processing text data
 │   │   └── ...
-│   ├── early_fusion/
-│   │   └── ...                   # Code for early fusion of audio and text modalities
-│   └── utils.py                  # Utility functions
+│   ├── fusion/
+│   │   ├── alignment.py          # Aligning two modalities using cross-attention
+│   │   ├── classifier.py         # Final classifier
+│   │   ├── fusion.py             # Multimodal
+│   │   └── ...
 ├── tests/
 │   ├── test_audio_pipeline.py    # Tests for audio pipeline
 │   ├── test_baseline.py          # Baseline model tests
 │   ├── test_text_pipeline.py     # Tests for text pipeline
-│   └── test_fusion.py            # Tests for fusion model
+│   ├── test_fusion.py            # Tests for fusion model
+│   └── ...
+├── utils/
+│   ├── asr.py                              # Converting audio to text
+│   ├── create_audio_label_json.py          # Mapping from audio to label
+│   ├── save_audio_with_metadata.py         # Tests with 8k data
+│   ├── util.py                             # Utility functions
+│   └── ...
 ├── requirements.txt
-└── README.md
+├── README.md
+└── main.py                                 # Main.py
 ```
 
