@@ -31,11 +31,11 @@ python utils/create_audio_label_json.py
   ```bash
 EmotiFusion/
 ├── data/
-│   ├── audio/               # Raw audio data
-│   ├── transcripts.json         # Raw text data
+│   ├── audio/                    # Raw audio data
+│   ├── transcripts.json          # Raw text data
 │   ├── labels.json
 ├── models/
-│   ├── finbert/             # Saved models
+│   ├── finbert/                  # Saved models
 ├── src/
 │   ├── audio_pipeline/
 │   │   ├── preprocess_audio.py   # Preprocesses raw audio data
@@ -59,13 +59,13 @@ EmotiFusion/
 │   ├── test_fusion.py            # Tests for fusion model
 │   └── ...
 ├── utils/
-│   ├── asr.py                              # Converting audio to text
-│   ├── create_audio_label_json.py          # Mapping from audio to label
-│   ├── save_audio_with_metadata.py         # Tests with 8k data
-│   ├── util.py                             # Utility functions
+│   ├── asr.py                           # Converting audio to text
+│   ├── create_audio_label_json.py       # Mapping from audio to label
+│   ├── save_audio_with_metadata.py      # Tests with 8k data
+│   ├── util.py                          # Utility functions
 │   └── ...
 ├── requirements.txt
 ├── README.md
-└── main.py                                 # Main.py
+└── main.py                              # Main.py
 ```
 
