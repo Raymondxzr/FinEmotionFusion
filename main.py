@@ -18,14 +18,15 @@ wav2vec_model = Wav2VecWrapper(pretrained_model_name="ehcalabres/wav2vec2-lg-xls
 finbert_model = FinBERTWrapper(pretrained_model_name="yiyanghkust/finbert-tone").to(device)
 
 # Cross-Attention Fusion: TODO
-audio_dim = ...  # Wav2Vec feature dimension
-text_dim = ...   # FinBERT feature dimension
-fused_dim = ...  # Dimension after fusion
+audio_dim = 768  # Wav2Vec feature dimension
+text_dim = 768   # FinBERT feature dimension
+fused_dim = 768  # Dimension after fusion
+hidden_dim = 128 # Dimension of hidden layer in classifier
 cross_attention_fusion = CrossAttentionFusion(audio_dim, text_dim, fused_dim).to(device)
 
 # Classifier Head
-num_classes = ...  # Number of emotion classes
-classifier_head = FusionClassifierHead(input_dim=fused_dim, num_classes=num_classes).to(device)
+num_classes = 8  # Number of emotion classes
+classifier_head = FusionClassifierHead(input_dim=fused_dim, hidden_dim=hidden_dim, num_classes=num_classes).to(device)
 
 # Multimodal Pipeline
 model = MultimodalPipeline(
@@ -72,5 +73,5 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
 # Sherry: write the tokenize + preprocess in text_pipeline/preprocess_text.py so that Bobby can use it here.
 dataloader = ...
 print("Training started...")
-train_model(model, dataloader, criterion, optimizer, device, num_epochs=10)
+# train_model(model, dataloader, criterion, optimizer, device, num_epochs=10)
 print("Training completed.")
