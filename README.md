@@ -23,8 +23,8 @@ Ensure you have [Conda](https://docs.conda.io/projects/conda/en/latest/user-guid
   pip install -r requirements.txt
   ```
 4. Move earnings_call folder to the top-level and then create audio-label mapping:
-   ```bash
-  python utils/create_audio_label_json.py
+```bash
+python utils/create_audio_label_json.py
   ```
 
 ### Project Structure
