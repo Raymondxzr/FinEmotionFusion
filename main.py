@@ -11,7 +11,7 @@ from src.fusion.classifier import FusionClassifierHead
 from src.fusion.fusion import MultimodalPipeline
 from src.data_pipeline.dataloader import *
 from src.audio_pipeline.preprocess_audio import *
-
+from src.text_pipeline.preprocess_text import *
 # Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
@@ -22,10 +22,10 @@ finbert_model = FinBERTWrapper(pretrained_model_name="yiyanghkust/finbert-tone")
 
 
 # Cross-Attention Fusion: TODO
-audio_dim = 768  # Wav2Vec feature dimension
+audio_dim = 1024  # Wav2Vec feature dimension
 text_dim = 768   # FinBERT feature dimension
-fused_dim = 768  # Dimension after fusion
-hidden_dim = 128 # Dimension of hidden layer in classifier
+fused_dim = 512  # Dimension after fusion
+hidden_dim = 256 # Dimension of hidden layer in classifier
 cross_attention_fusion = CrossAttentionFusion(audio_dim, text_dim, fused_dim).to(device)
 
 # Classifier Head
@@ -72,14 +72,20 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
 
 audio_dir_path = 'data/audio'
 labels_dir_path = 'data/labels.json'
-with open(labels_dir_path, "r") as json_file:
-    labels_dict = json.load(json_file)[0]
+transcripts_path = "data/transcripts.json"
 
-preprocessor_audio = AudioPreprocessor(audio_dir_path, labels_dict)
-processed_audio, labels = preprocessor_audio.preprocess()
+with open(labels_dir_path, "r") as json_file:
+    labels_dict = json.load(json_file)
+
+
+preprocessor_text = TextPreprocessor(transcripts_path)
+preprocessor_audio = AudioPreprocessor(audio_dir_path, preprocessor_text, labels_dict)
+processed_audio, processed_text, labels = preprocessor_audio.preprocess()
 # Create dataset and dataloader
-dataset = BatchedDataset(processed_audio, labels)
-dataloader = DataLoader(dataset, batch_size=8, shuffle=True, collate_fn=collate_fn)
+dataset = EmoDataset(processed_audio, processed_text, labels)
+subset_dataset = torch.utils.data.Subset(dataset, indices=range(4))
+
+dataloader = DataLoader(subset_dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
 
 print("Training started...")
 train_model(model, dataloader, criterion, optimizer, device, num_epochs=10)

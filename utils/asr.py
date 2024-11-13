@@ -1,6 +1,10 @@
 import os
 import json
 import whisper
+import warnings
+from tqdm import tqdm
+
+warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
 
 def transcribe_audio_files(audio_dir, output_json_path, model_name="base"):
     """
@@ -12,7 +16,7 @@ def transcribe_audio_files(audio_dir, output_json_path, model_name="base"):
         model_name (str): Whisper model name to use for transcription (e.g., "base", "small", "medium", "large").
     """
     # Load the Whisper model
-    model = whisper.load_model(model_name)
+    model = whisper.load_model(model_name)#.to("cuda")
     
     # List all audio files in the directory
     audio_files = [f for f in os.listdir(audio_dir) if f.endswith((".wav", ".mp3"))]
@@ -21,9 +25,9 @@ def transcribe_audio_files(audio_dir, output_json_path, model_name="base"):
     transcripts = {}
     
     # Transcribe each audio file
-    for audio_file in audio_files:
+    for audio_file in tqdm(audio_files):
         audio_path = os.path.join(audio_dir, audio_file)
-        print(f"Transcribing {audio_path}...")
+        # print(f"Transcribing {audio_path}...")
         
         # Perform transcription
         result = model.transcribe(audio_path)
@@ -39,6 +43,6 @@ def transcribe_audio_files(audio_dir, output_json_path, model_name="base"):
     print(f"Transcriptions saved to {output_json_path}")
 
 # Usage example
-audio_dir = "data/audio"
-output_json_path = "data/transcripts.json"
+audio_dir = "../data/audio"
+output_json_path = "../data/transcripts.json"
 transcribe_audio_files(audio_dir, output_json_path)

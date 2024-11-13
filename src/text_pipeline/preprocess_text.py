@@ -4,7 +4,7 @@ from transformers import BertTokenizer
 from tqdm import tqdm
 
 class TextPreprocessor:
-    def __init__(self, transcripts_path, tokenizer_model="yiyanghkust/finbert-tone", max_length=128, batch_size=4):
+    def __init__(self, transcripts_path, tokenizer_model="yiyanghkust/finbert-tone", max_length=128):
         """
         Initialize the TextPreprocessor.
 
@@ -12,12 +12,10 @@ class TextPreprocessor:
             transcripts_path (str): Path to the JSON file containing transcriptions.
             tokenizer_model (str): Pretrained tokenizer model.
             max_length (int): Maximum token length for padding/truncation.
-            batch_size (int): Batch size for tokenizing the text.
         """
         self.transcripts_path = transcripts_path
         self.tokenizer = BertTokenizer.from_pretrained(tokenizer_model)
         self.max_length = max_length
-        self.batch_size = batch_size
 
     def load_transcripts(self):
         """
@@ -34,18 +32,18 @@ class TextPreprocessor:
         
         return transcripts
 
-    def tokenize_batch(self, batch_texts):
+    def tokenize_text(self, text):
         """
-        Tokenize a batch of text.
+        Tokenize a single text string.
 
         Args:
-            batch_texts (list): List of text strings to tokenize.
+            text (str): Text string to tokenize.
 
         Returns:
             dict: Tokenized inputs compatible with transformer models.
         """
         tokenized = self.tokenizer(
-            batch_texts,
+            text,
             padding="max_length",
             truncation=True,
             max_length=self.max_length,
@@ -55,28 +53,20 @@ class TextPreprocessor:
 
     def preprocess(self):
         """
-        Preprocess all transcriptions.
+        Preprocess all transcriptions sequentially.
 
         Returns:
             dict: Dictionary containing tokenized inputs for all transcriptions.
         """
         transcripts = self.load_transcripts()
-        all_keys = list(transcripts.keys())
-        all_texts = list(transcripts.values())
-
         tokenized_data = {}
-        
-        for i in tqdm(range(0, len(all_texts), self.batch_size), desc="Tokenizing text batches"):
-            batch_keys = all_keys[i:i + self.batch_size]
-            batch_texts = all_texts[i:i + self.batch_size]
-            tokenized_inputs = self.tokenize_batch(batch_texts)
-            
-            # Map back to audio file names
-            for j, key in enumerate(batch_keys):
-                tokenized_data[key] = {
-                    "input_ids": tokenized_inputs["input_ids"][j].tolist(),
-                    "attention_mask": tokenized_inputs["attention_mask"][j].tolist(),
-                }
+
+        for key, text in tqdm(transcripts.items(), desc="Tokenizing text sequentially"):
+            tokenized_inputs = self.tokenize_text(text)
+            tokenized_data[key] = {
+                "input_ids": tokenized_inputs["input_ids"].squeeze(0).tolist(),
+                "attention_mask": tokenized_inputs["attention_mask"].squeeze(0).tolist(),
+            }
 
         return tokenized_data
 
@@ -98,7 +88,7 @@ class TextPreprocessor:
 # Usage Example
 if __name__ == "__main__":
     transcripts_path = "data/transcripts.json"
-    output_path = "data/tokenized_transcripts.json"
+    # output_path = "data/tokenized_transcripts.json"
 
     text_preprocessor = TextPreprocessor(transcripts_path)
-    text_preprocessor.save_tokenized_data(output_path)
+    # text_preprocessor.save_tokenized_data(output_path)

@@ -99,7 +99,7 @@ def create_audio_label_json(base_dir, labels_file_path, output_json_path, direct
         # Map each audio file to a label
         for audio_file in sorted_files_list:
             if label_index < len(labels):
-                data[audio_file] = int(labels[label_index])
+                data[os.path.splitext(audio_file)[0]] = int(labels[label_index])
                 # data.append({"audio_file": audio_file, "label": labels[label_index]})
                 label_index += 1
             else:
@@ -108,7 +108,7 @@ def create_audio_label_json(base_dir, labels_file_path, output_json_path, direct
 
     # Save the data as a JSON file
     with open(output_json_path, "w") as json_file:
-        json.dump([data], json_file, indent=4)
+        json.dump(data, json_file, indent=4)
 
     print(f"JSON file with audio-to-label mapping has been saved to {output_json_path}")
 
