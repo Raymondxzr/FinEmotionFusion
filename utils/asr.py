@@ -43,6 +43,6 @@ def transcribe_audio_files(audio_dir, output_json_path, model_name="base"):
     print(f"Transcriptions saved to {output_json_path}")
 
 # Usage example
-audio_dir = "../data/audio"
+audio_dir = "../data/data_1000"
 output_json_path = "../data/transcripts.json"
 transcribe_audio_files(audio_dir, output_json_path)

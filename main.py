@@ -47,6 +47,8 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
     model.train()
     for epoch in tqdm(range(num_epochs)):
         total_loss = 0
+        correct_predictions = 0
+        total_samples = 0
         for batch in dataloader:
             # Unpack batch
             audio_inputs, text_inputs, labels = batch
@@ -66,11 +68,21 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
             optimizer.step()
 
             total_loss += loss.item()
+            
+            # Calculate accuracy
+            _, predicted = torch.max(outputs, dim=1)  # Get predicted classes
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+        
+        # Calculate average loss and accuracy for this epoch
+        avg_epoch_loss = total_loss / len(dataloader)
+        accuracy = correct_predictions / total_samples
+        train_losses.append(avg_epoch_loss)
+    
+    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {avg_epoch_loss:.4f}, Accuracy: {accuracy:.4f}")
 
-        # Log epoch progress
-        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {total_loss / len(dataloader):.4f}")
 
-audio_dir_path = 'data/audio'
+audio_dir_path = 'data/data_1000'
 labels_dir_path = 'data/labels.json'
 transcripts_path = "data/transcripts.json"
 
@@ -85,7 +97,7 @@ processed_audio, processed_text, labels = preprocessor_audio.preprocess()
 dataset = EmoDataset(processed_audio, processed_text, labels)
 subset_dataset = torch.utils.data.Subset(dataset, indices=range(4))
 
-dataloader = DataLoader(subset_dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
+dataloader = DataLoader(subset_dataset, batch_size=1, shuffle=True, collate_fn=collate_fn)
 
 print("Training started...")
 train_model(model, dataloader, criterion, optimizer, device, num_epochs=10)
