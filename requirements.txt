@@ -16,9 +16,9 @@ requests==2.32.3
 safetensors==0.4.5
 sympy==1.13.3
 tokenizers==0.20.3
-torch==2.0.1
-# torch==2.5.1
-torchaudio==2.0.2
+# torch==2.0.1
+torch==2.5.1
+torchaudio
 tqdm==4.67.0
 transformers==4.46.2
 typing_extensions==4.12.2
