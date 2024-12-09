@@ -3,8 +3,9 @@ data
 # Ignore Hugging Face cache
 .cache/huggingface/datasets/
 earnings_call
+model/finbert-finetuned
 logs
-
+data/labels_100.npy
 __pycache__/
 *.pyc
 .DS_Store
