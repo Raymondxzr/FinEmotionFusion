@@ -39,9 +39,6 @@ class AudioPreprocessor:
     def preprocess(self):
         """
         Preprocess all audio files, aligning audio features, tokenized text, and labels.
-
-        Returns:
-            list: List of dictionaries containing audio features, tokenized text, and labels.
         """
         all_audio = []
         all_text = []
